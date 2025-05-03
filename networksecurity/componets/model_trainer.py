@@ -66,8 +66,7 @@ class ModelTrainer:
             
         }
         
-        model_report : dict = evaluate_models(X_train = X_train, y_train = y_train, X_test = x_test, y_test = y_test,
-                                              models = models, param = params) 
+        model_report : dict = evaluate_models(X_train = X_train, y_train = y_train, X_test = x_test, y_test = y_test, models = models, param = params) 
         
         best_model_score = max(sorted(model_report.values()))
         best_model_name = list(model_report.keys())[
@@ -85,36 +84,41 @@ class ModelTrainer:
         y_test_pred = best_model.predict(x_test)
         classification_test_metric = get_classification_score(y_true = y_test, y_pred = y_test_pred)
         
-        preprocessor = load_object(self.model_trainer_config.trained_model_file_path)
+        preprocessor = load_object(self.data_transformation_artifact.transformed_object_file_path)
         
         model_dir_path = os.path.dirname(self.model_trainer_config.trained_model_file_path)
         os.makedirs(model_dir_path, exist_ok = True)
         
-       Network_Model =  NetworkModel(preprocessor = preprocessor, model = best_model)
-       save_object(self.model_trainer_config.trained_model_file_path, obj = NetworkModel)
-       
-       ## Model trainer artifact 
-      model_trainer_artifact =  ModelTrainerArtifact(trained_model_file_path = self.model_trianer_config.trainded_model_file_path,
+        Network_Model =  NetworkModel(preprocessor = preprocessor, model = best_model)
+        save_object(self.model_trainer_config.trained_model_file_path, obj = NetworkModel)
+
+        ## Model trainer artifact 
+        model_trainer_artifact =  ModelTrainerArtifact(trained_model_file_path = self.model_trainer_config.trained_model_file_path,
                             train_metric_artifact = classification_train_metric, 
                             test_metric_artifact = classification_test_metric)
-       logging.info(f"Model trainer artifact : {model_trainer_artifact}")
+        logging.info(f"Model trainer artifact : {model_trainer_artifact}")
+        return model_trainer_artifact
         
         
-    def initiate_model_trainer(self) -> ModelTrainerArtifact:
+    def initiate_model_trainer(self)->ModelTrainerArtifact:
         try:
             train_file_path = self.data_transformation_artifact.transformed_train_file_path
             test_file_path = self.data_transformation_artifact.transformed_test_file_path
-            
+
+            #loading training array and testing array
             train_arr = load_numpy_array_data(train_file_path)
             test_arr = load_numpy_array_data(test_file_path)
-            
-            x_trian, y_train, x_test, y_test = (
+
+            x_train, y_train, x_test, y_test = (
                 train_arr[:, :-1],
                 train_arr[:, -1],
                 test_arr[:, :-1],
                 test_arr[:, -1],
             )
+
+            model_trainer_artifact=self.train_model(x_train,y_train,x_test,y_test)
+            return model_trainer_artifact
+
             
-            model = self.train_model(x_trian, y_train)
         except Exception as e:
-            raise NetworkSecurityException(e, sys)
+            raise NetworkSecurityException(e,sys)

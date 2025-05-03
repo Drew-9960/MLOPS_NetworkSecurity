@@ -65,7 +65,7 @@ def load_object(file_path : str, ) -> object:
     except Exception as e:
         raise NetworkSecurityException(e, sys) from e 
 
-def load_numpy_array(file_path : str) -> np.array:
+def load_numpy_array_data(file_path : str) -> np.array:
     try:
         with open(file_path, 'rb') as file_obj:
             return np.load(file_obj)
@@ -78,7 +78,7 @@ def evaluate_models(X_train, y_train, X_test, y_test, models, param):
         
         for i in range(len(list(models))):
             model = list(models.values())[i]
-            para = param[list(model.keys())[i]]
+            para = param[list(models.keys())[i]]
             
             gs = GridSearchCV(model, para, cv = 3)
             gs.fit(X_train, y_train)
