@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/drewmelendez/Documents/Git/MLOPS_NetworkSecurity/mlruns/0/d6dded54c9ea44a3b08c1a647cd78bdc/artifacts
+end_time: 1747160614290
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: d6dded54c9ea44a3b08c1a647cd78bdc
+run_name: clean-gull-59
+run_uuid: d6dded54c9ea44a3b08c1a647cd78bdc
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1747160614285
+status: 4
+tags: []
+user_id: drewmelendez
